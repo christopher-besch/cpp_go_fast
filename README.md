@@ -1,2 +1,3 @@
-# cpp_go_fast
-What Every Programmer Should Know About Memory
+# C++ Go Fast
+
+Based on [What Every Programmer Should Know About Memory](https://www.gwern.net/docs/cs/2007-drepper.pdf)
