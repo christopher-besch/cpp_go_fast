@@ -70,7 +70,17 @@ Based on [What Every Programmer Should Know About Memory](https://www.gwern.net/
 
 ### L2+
 
+- working set size for more than one use matched to cache size -> work on bigger problems in smaller pieces
+- hardcode cache line size
+- higher level cache size can vary widely -> cod must adjust dynamically
+- instructions and libraries use higher level cache too
+- `/sys/devices/system/cpu/cpu*/cache` for safe lower limit (p. 59)
+
 ### TLB
+
+- page optimization for both page faulst and TLB misses
+- widely varying locations in address space -> more directories
+- Address Space Layout Randomization (ASLR) slow
 
 ## Prefetching
 
