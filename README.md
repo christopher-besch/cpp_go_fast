@@ -84,27 +84,70 @@ Based on [What Every Programmer Should Know About Memory](https://www.gwern.net/
 
 ## Prefetching
 
-### Hardware Prefetching
+### Hardware Prefetching (p. 60)
 
-### Software Prefetching
+- at least two cache misses start prefetching
+- can't cross page boundaries
+- keep unrelated data out -> less cache pollution
 
-### Speculation
+### Software Prefetching (p. 61)
 
-### Helper Threads
+- `_mm_prefetch` intrinsic on pointer -> prefetch
+- `-fprefetch-loop-arrays` -> prefetch if sensible -> bad for small arrays
 
-### Direct Cache Access
+### Speculation (p. 62)
+
+### Helper Threads (p. 63)
+
+### Direct Cache Access (p. 64)
 
 ## Multi-Thread
 
-### Concurrency
+### Concurrency (p. 65)
 
-### Atomicity
+- goal: fewer RFO messages
+- grouping:
+    - group "constant" variables (change very rarely) -> always mark with `const` if possible
+    - group variables used together by same thread -> `int bar __attribute__((section(".data.ro"))) = 2;` -> ".data." prefix guarantees place together with other data sections; rest arbitrary
+    - separate read-only, read-write (and read-mostly)
+    - group read-write in struct -> only way of ensuring close memory locations
+    - read-write often written by different threads own cache line -> padding
+- TLS:
+    - thread-local storage (TLS) `__thread int bar = 2;` -> stored separately for each thread -> costs time when thread created
+    - thread-local variables are addressable by other threads but unless pointer passed, no way to find
+    - shift over more expensive -> copy required
+    - when only one thread uses variable -> wasted resources
+    - good when multiple threads independent use
 
-### Bandwidth
+### Atomicity (p. 68)
 
-# Memory Performance Tools
+- Bit Test
+- Load Lock / Store Conditional (LL/SC)
+- Compare-and-Swap (CAS) -> expensive
+- Atomic Arithmetic -> still expensive (~200 cycles)
+
+### Bandwidth (p. 70)
+
+- place thread better -> thread affinity: assign thread to one or more cores
+
+## NUMA (p. 72)
+
+# Memory Performance Tools (p. 78)
+
+- relate multiple counter to each other
+- divisor is measure of processing time, number of clock cycles or number of instructions
+- CPI (cycle per instruction):
+    - not limited by memory bandwidth significantly below 1.0
+    - L1d not large enough -> 3.0
+    - L2 not sufficient -> 20.0
+    - average over all instructions
 
 - Perf
 - Pahole
+- pfmon
+
+## oprofile
+
+- systemwide
 
 Chapter 6.5 NUMA Programming is missing.
