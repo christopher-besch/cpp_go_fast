@@ -151,3 +151,14 @@ Based on [What Every Programmer Should Know About Memory](https://www.gwern.net/
 - systemwide
 
 Chapter 6.5 NUMA Programming is missing.
+
+## Requirements
+  - python
+    - numpy
+    - pandas
+    - matplotlib
+  - c/c++
+    - gcc/g++
+  - OS
+    - linux 
+  
