@@ -89,6 +89,7 @@ Based on [What Every Programmer Should Know About Memory](https://www.gwern.net/
 - at least two cache misses start prefetching
 - can't cross page boundaries
 - keep unrelated data out -> less cache pollution
+- sequential access -> hardware prefetching
 
 ### Software Prefetching (p. 61)
 
@@ -132,7 +133,9 @@ Based on [What Every Programmer Should Know About Memory](https://www.gwern.net/
 
 ## NUMA (p. 72)
 
-# Memory Performance Tools (p. 78)
+# Memory Performance Tools
+
+## Oprofil (p. 78)
 
 - relate multiple counter to each other
 - divisor is measure of processing time, number of clock cycles or number of instructions
@@ -141,6 +144,9 @@ Based on [What Every Programmer Should Know About Memory](https://www.gwern.net/
     - L1d not large enough -> 3.0
     - L2 not sufficient -> 20.0
     - average over all instructions
+- number of retired instructions used -> for cache miss rate load and store instructions have to be subtracted
+- inclusive caches -> L1d miss implies L2 miss as well
+- check if prefetch instructions issued too late
 
 - Perf
 - Pahole
