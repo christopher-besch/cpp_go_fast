@@ -89,6 +89,7 @@ Based on [What Every Programmer Should Know About Memory](https://www.gwern.net/
 - at least two cache misses start prefetching
 - can't cross page boundaries
 - keep unrelated data out -> less cache pollution
+- sequential access -> hardware prefetching
 
 ### Software Prefetching (p. 61)
 
@@ -132,8 +133,11 @@ Based on [What Every Programmer Should Know About Memory](https://www.gwern.net/
 
 ## NUMA (p. 72)
 
-# Memory Performance Tools (p. 78)
+# Memory Performance Tools
 
+## Oprofil (p. 78)
+
+- stochastic, system-wide profiling -> not all events recorded accurately
 - relate multiple counter to each other
 - divisor is measure of processing time, number of clock cycles or number of instructions
 - CPI (cycle per instruction):
@@ -141,6 +145,67 @@ Based on [What Every Programmer Should Know About Memory](https://www.gwern.net/
     - L1d not large enough -> 3.0
     - L2 not sufficient -> 20.0
     - average over all instructions
+- number of retired instructions used -> for cache miss rate load and store instructions have to be subtracted
+- inclusive caches -> L1d miss implies L2 miss as well
+- check if prefetch instructions issued too late (late NTA prefetches) or not used (1 - useful NTA prefetches + late NTA prefetches) -> wasted decoding of prefetch instruction
+
+## Opannotate (p. 80)
+
+- every event recorded with instruction pointer -> pinpoint hot spots
+
+## \time (p. 80)
+
+- list minor and major page faults
+- `#include <sys/resource.h>` `int getrusage(__rusage_who_t who, struct rusage* usage)` who can be `RUSAGE_SELF` or `RUSAGE_CHILDREN` -> can be used multiple times -> determine where page faults
+- can also be found in `/proc/<PID/stat`
+
+## Valgrind
+
+### Cachegrind (p. 81)
+
+- simulates different caches
+- `valgrind --tool=cachegrind command arg` -> use sizes and associativity of real processor running on
+- `valgrind --tool=cachegrind --L2=8388608,8,64 command arg` -> simulate 8MB L2 ache with 8-way set associativity and 64 byte cache line size
+- `cachegrind.out.XXXXX` with PID can be viewed with cg_annotate:
+    - cache line use in each function
+    - debug information required
+    - when source file given -> annotates each line
+- number of cache misses lower than in reality
+
+### Massif (p. 82)
+
+- `valgrind --tool=massif command arg`
+- creates `massif.XXXXX.txt` and `massif.XXXXX.ps`
+- `--stacks=no` -> disabling stack monitoring -> might be useful when not possible
+- `aloc-fn=xmallox` -> use custom allocator
+
+## Memusage (p. 83)
+
+- `memusage command arg`
+- total memory use for heap and optionally stack
+- `-p IMGFILE` -> create graph
+- faster than valgrind
+- `-n NAME` for selecting specific child program
+- dynamic memory allocation -> linear allocation and compactness
+- obstacks can be used when many allocations from same location -> large number of relatively small allocations
+- graph over number of calls gentle slope -> lot of small allocations
+
+## Profile Guided Optimization (p. 85)
+
+- test static assumptions
+- with gcc:
+    1. build with `-fprofile-generate`
+    2. run representative set of workloads output can be read with gcov
+    3. build again with `-fprofile-use`
+
+## Pagein (p. 86)
+
+- reduce total number of used pages
+- `valgrind --tool=pagein command arg`
+- valgrind produces some artifacts
+- add `MAP_POPULATE` to fourth parameter of mmap -> pre-fault all pages in mapped area
+- might clog up the system when only used much later
+- hugetlbfs for huge pages (like 2MB instead of 64KB)
 
 - Perf
 - Pahole
