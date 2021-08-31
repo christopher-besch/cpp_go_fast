@@ -18,8 +18,11 @@ restrict: restrict/main.c init
 	gcc restrict/main.c -std=gnu99 -O3 -ffast-math -o ${bdir}/restrict
 	gcc restrict/main.c -std=gnu99 -O3 -ffast-math -S -o ${bdir}/restrict.asm
 
+restrict_plot: restrict
+	cd ./${bdir} ; ./restrict
+	cd ./${bdir} ; python ./../restrict/plot.py
 
-plot_all: aos_vs_soa_plot
+plot_all: aos_vs_soa_plot restrict_plot
 
 init:
 	mkdir -p ${bdir}
