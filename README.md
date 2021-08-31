@@ -227,3 +227,8 @@ Chapter 6.5 NUMA Programming is missing.
   - OS
     - linux 
   
+## Plotting
+
+```shell
+make plot_all 
+```
